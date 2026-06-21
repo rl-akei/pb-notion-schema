@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Système Notion PB-associés — Schéma des bases & relations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F4F1E7; --paper:#FBF9F3; --ink:#16291E; --aloe:#244A33;
+    --aloe2:#356B4A; --mindaro:#CDE85A; --mindaro-soft:#EAF3BE;
+    --line:#DED8C6; --muted:#6B7A6E; --calc:#B98900;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--cream); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  header.hero{
+    padding:64px 0 40px; border-bottom:1px solid var(--line);
+  }
+  .kicker{
+    display:inline-block; font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--aloe2); font-weight:600; padding:6px 12px; border:1px solid var(--line);
+    border-radius:999px; background:var(--paper);
+  }
+  h1{
+    font-family:'Fraunces',Georgia,serif; font-weight:600; font-size:clamp(30px,5vw,52px);
+    line-height:1.05; margin:20px 0 10px; letter-spacing:-.01em;
+  }
+  .sub{color:var(--muted); font-size:17px; max-width:760px}
+  .meta{margin-top:22px; display:flex; gap:10px; flex-wrap:wrap}
+  .pill{font-size:13px; background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:6px 13px; color:var(--aloe)}
+  .pill b{color:var(--ink)}
+  section{padding:48px 0; border-bottom:1px solid var(--line)}
+  h2{font-family:'Fraunces',serif; font-weight:600; font-size:28px; margin:0 0 6px}
+  .lead{color:var(--muted); margin:0 0 26px; max-width:780px}
+  .diagram{
+    background:var(--paper); border:1px solid var(--line); border-radius:18px;
+    padding:18px; overflow:auto; box-shadow:0 1px 0 rgba(0,0,0,.02);
+  }
+  .legend{display:flex; gap:18px; flex-wrap:wrap; margin-top:18px; font-size:13.5px; color:var(--muted)}
+  .legend span{display:inline-flex; align-items:center; gap:7px}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:18px}
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:20px 20px 16px;
+    position:relative;
+  }
+  .card h3{font-family:'Fraunces',serif; font-size:20px; margin:0 0 2px; display:flex; align-items:center; gap:9px}
+  .card .role{font-size:12.5px; color:var(--muted); margin:0 0 14px}
+  .card.central{border:1.5px solid var(--aloe2); box-shadow:0 0 0 4px var(--mindaro-soft)}
+  .badge{font-size:11px; font-weight:600; color:var(--aloe); background:var(--mindaro-soft); border-radius:6px; padding:2px 8px}
+  ul.fields{list-style:none; margin:0; padding:0; font-size:13.5px}
+  ul.fields li{padding:4px 0; border-top:1px dashed var(--line); display:flex; justify-content:space-between; gap:12px}
+  ul.fields li:first-child{border-top:none}
+  ul.fields .n{color:var(--ink)}
+  ul.fields .t{color:var(--muted); font-size:12px; white-space:nowrap}
+  ul.fields .t.rel{color:var(--aloe2); font-weight:500}
+  ul.fields .t.calc{color:var(--calc); font-weight:500}
+  .note{font-size:13.5px; color:var(--muted); background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--mindaro); border-radius:0 12px 12px 0; padding:14px 18px; margin-top:18px}
+  footer{padding:36px 0 70px; color:var(--muted); font-size:13px}
+  a{color:var(--aloe2)}
+  code{background:var(--mindaro-soft); padding:1px 6px; border-radius:5px; font-size:.9em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker">Rama Logic · LOGIC AI</span>
+    <h1>Système Notion PB-associés</h1>
+    <p class="sub">Schéma des bases de données et des relations — cœur opérationnel (Lot 1). Modèle <code>Clients → Opportunités → Missions → Tâches</code> avec suivi du temps, rentabilité annuelle et pilotage commercial intégrés.</p>
+    <div class="meta">
+      <span class="pill"><b>8</b> bases reliées</span>
+      <span class="pill"><b>20</b> relations</span>
+      <span class="pill">Simulateur d'honoraires</span>
+      <span class="pill">Rentabilité annuelle auto</span>
+      <span class="pill">100% français</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Carte des relations</h2>
+    <p class="lead">Chaque flèche est une relation Notion bidirectionnelle. <b>Clients</b> est l'objet central : tout converge vers le dossier client (vue 360°).</p>
+    <div class="diagram">
+      <pre class="mermaid">
+erDiagram
+  CLIENTS ||--o{ CONTACTS : "interlocuteurs"
+  CLIENTS ||--o{ OPPORTUNITES : "deals"
+  CONTACTS ||--o{ OPPORTUNITES : "contact"
+  CLIENTS ||--o{ MISSIONS : "missions"
+  OPPORTUNITES ||--o{ MISSIONS : "genere (signature)"
+  MISSIONS ||--o{ TACHES : "taches"
+  CLIENTS ||--o{ TACHES : "client"
+  CONTACTS ||--o{ TACHES : "contact"
+  TACHES ||--o{ TACHES : "sous-taches"
+  MISSIONS ||--o{ SUIVI_TEMPS : "temps"
+  TACHES ||--o{ SUIVI_TEMPS : "temps"
+  CLIENTS ||--o{ SUIVI_TEMPS : "temps"
+  COLLABORATEURS ||--o{ SUIVI_TEMPS : "auteur"
+  COLLABORATEURS ||--o{ CLIENTS : "equipe dossier"
+  COLLABORATEURS ||--o{ MISSIONS : "affecte"
+  COLLABORATEURS ||--o{ OPPORTUNITES : "responsable"
+  COLLABORATEURS ||--o{ TACHES : "responsable"
+  CLIENTS ||--o{ DOCUMENTS : "documents"
+  MISSIONS ||--o{ DOCUMENTS : "documents"
+  OPPORTUNITES ||--o{ DOCUMENTS : "documents"
+
+  CLIENTS {
+    titre Nom_societe
+    select Forme_juridique
+    select Regime_fiscal
+    select Regime_TVA
+    number Honoraire_mensuel_recurrent
+    formule Rentabilite_annuelle
+  }
+  CONTACTS {
+    titre Nom
+    select Role
+    email Email
+    bool Signataire
+  }
+  OPPORTUNITES {
+    titre Nom_opportunite
+    statut Etape
+    number Honoraire_estime
+    formule Cout_de_production
+    formule Honoraire_suggere
+    formule Marge_previsionnelle
+  }
+  MISSIONS {
+    titre Nom_mission
+    select Type_de_mission
+    select Typologie_moteur
+    number Temps_vendu
+    rollup Temps_realise
+    formule Rentabilite
+  }
+  TACHES {
+    titre Tache
+    select Type
+    date Echeance
+    select Statut
+    relation Sous_tache_de
+  }
+  SUIVI_TEMPS {
+    titre Entree
+    date Date
+    number Duree_h
+    bool Facturable
+  }
+  COLLABORATEURS {
+    titre Nom
+    select Role
+    select Statut_autonomie
+    number Capacite
+  }
+  DOCUMENTS {
+    titre Nom_document
+    select Type
+    select Statut
+    url Lien_Drive
+  }
+      </pre>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--aloe2)"></span> relation (lien entre bases)</span>
+      <span><span class="dot" style="background:var(--calc)"></span> calcul automatique (formule / rollup)</span>
+      <span><span class="dot" style="background:var(--mindaro)"></span> base centrale</span>
+      <span>Cardinalité <code>1 — N</code> : un parent, plusieurs enfants</span>
+    </div>
+    <div class="note"><b>Lecture du moteur :</b> une <b>Opportunité</b> gagnée (signature de la lettre de mission) génère une ou plusieurs <b>Missions</b> rattachées au <b>Client</b>. Chaque Mission porte des <b>Tâches</b> récurrentes, et le <b>Suivi du temps</b> remonte la rentabilité au niveau Mission puis Client. L'équipe du dossier (Resp. portefeuille → Chef de mission → Expert comptable) est portée par le Client.</div>
+  </section>
+
+  <section>
+    <h2>Les 8 bases en détail</h2>
+    <p class="lead">Propriétés clés par base. <span style="color:var(--aloe2)">Vert</span> = relation, <span style="color:var(--calc)">ocre</span> = calcul automatique.</p>
+    <div class="grid">
+
+      <div class="card central">
+        <h3>🏢 PB-Clients <span class="badge">central</span></h3>
+        <p class="role">Le dossier client unique (vue 360°)</p>
+        <ul class="fields">
+          <li><span class="n">Nom société</span><span class="t">titre</span></li>
+          <li><span class="n">Forme juridique</span><span class="t">select · 11 formes</span></li>
+          <li><span class="n">Régime fiscal</span><span class="t">select · IS / IR</span></li>
+          <li><span class="n">Régime TVA</span><span class="t">select</span></li>
+          <li><span class="n">Secteur / Activité</span><span class="t">select</span></li>
+          <li><span class="n">SIREN</span><span class="t">texte</span></li>
+          <li><span class="n">Date de clôture</span><span class="t">date</span></li>
+          <li><span class="n">Nb employés</span><span class="t">nombre</span></li>
+          <li><span class="n">Statut relation</span><span class="t">select</span></li>
+          <li><span class="n">Niveau d'autonomie</span><span class="t">select · 1-3</span></li>
+          <li><span class="n">Honoraire mensuel récurrent</span><span class="t">€</span></li>
+          <li><span class="n">Resp. Portefeuille / Chef / EC</span><span class="t rel">→ Collaborateurs</span></li>
+          <li><span class="n">Contacts · Opportunités · Missions</span><span class="t rel">relations</span></li>
+          <li><span class="n">Temps vendu / réalisé total</span><span class="t calc">rollup</span></li>
+          <li><span class="n">Rentabilité (annuelle)</span><span class="t calc">formule</span></li>
+          <li><span class="n">ID Inqom / Tiime / Pipedrive</span><span class="t">clés sync</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>👥 PB-Contacts</h3>
+        <p class="role">Interlocuteurs des clients</p>
+        <ul class="fields">
+          <li><span class="n">Nom</span><span class="t">titre</span></li>
+          <li><span class="n">Rôle</span><span class="t">Dirigeant / Comptable…</span></li>
+          <li><span class="n">Email</span><span class="t">email</span></li>
+          <li><span class="n">Téléphone</span><span class="t">tél</span></li>
+          <li><span class="n">Signataire ?</span><span class="t">case</span></li>
+          <li><span class="n">Société</span><span class="t rel">→ Clients</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>💼 PB-Opportunités</h3>
+        <p class="role">Pipeline commercial (remplace Pipedrive)</p>
+        <ul class="fields">
+          <li><span class="n">Nom opportunité</span><span class="t">titre</span></li>
+          <li><span class="n">Type de mission visée</span><span class="t">multi-select</span></li>
+          <li><span class="n">Étape</span><span class="t">statut · pipeline</span></li>
+          <li><span class="n">Honoraire estimé</span><span class="t">€</span></li>
+          <li><span class="n">Heures EC / Collab</span><span class="t">nombre</span></li>
+          <li><span class="n">Taux EC / Collab · Marge cible</span><span class="t">éditables</span></li>
+          <li><span class="n">Coût de production estimé</span><span class="t calc">formule</span></li>
+          <li><span class="n">Honoraire suggéré</span><span class="t calc">formule</span></li>
+          <li><span class="n">Marge prévisionnelle (%)</span><span class="t calc">formule</span></li>
+          <li><span class="n">Client / Prospect · Contact</span><span class="t rel">relations</span></li>
+          <li><span class="n">Responsable</span><span class="t rel">→ Collaborateurs</span></li>
+          <li><span class="n">Missions générées</span><span class="t rel">→ Missions</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📋 PB-Missions</h3>
+        <p class="role">Missions actives par client</p>
+        <ul class="fields">
+          <li><span class="n">Nom mission</span><span class="t">titre</span></li>
+          <li><span class="n">Type de mission</span><span class="t">select</span></li>
+          <li><span class="n">Typologie (moteur)</span><span class="t">Mensuel / Trim…</span></li>
+          <li><span class="n">Récurrence · Statut</span><span class="t">select</span></li>
+          <li><span class="n">Honoraire mensuel</span><span class="t">€</span></li>
+          <li><span class="n">Temps vendu (h/an)</span><span class="t">nombre</span></li>
+          <li><span class="n">Temps réalisé (h)</span><span class="t calc">rollup</span></li>
+          <li><span class="n">Rentabilité (annuelle)</span><span class="t calc">formule</span></li>
+          <li><span class="n">Client · Opportunité d'origine</span><span class="t rel">relations</span></li>
+          <li><span class="n">Collaborateur affecté</span><span class="t rel">→ Collaborateurs</span></li>
+          <li><span class="n">Tâches · Entrées temps</span><span class="t rel">relations</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>✅ PB-Tâches</h3>
+        <p class="role">Tâches & sous-tâches (production + demandes internes)</p>
+        <ul class="fields">
+          <li><span class="n">Tâche</span><span class="t">titre auto</span></li>
+          <li><span class="n">Type</span><span class="t">TVA / Bilan / IS…</span></li>
+          <li><span class="n">Échéance</span><span class="t">date</span></li>
+          <li><span class="n">Statut</span><span class="t">À faire / En attente…</span></li>
+          <li><span class="n">Priorité · Récurrente ?</span><span class="t">select / case</span></li>
+          <li><span class="n">Sous-tâche de / Sous-tâches</span><span class="t rel">auto-relation</span></li>
+          <li><span class="n">Mission · Client · Contact</span><span class="t rel">relations</span></li>
+          <li><span class="n">Responsable</span><span class="t rel">→ Collaborateurs</span></li>
+          <li><span class="n">Temps passé (h)</span><span class="t calc">rollup</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>⏱️ PB-Suivi du temps</h3>
+        <p class="role">Temps passé (natif Notion) → rentabilité</p>
+        <ul class="fields">
+          <li><span class="n">Entrée</span><span class="t">titre</span></li>
+          <li><span class="n">Date</span><span class="t">date</span></li>
+          <li><span class="n">Durée (h)</span><span class="t">nombre</span></li>
+          <li><span class="n">Facturable ?</span><span class="t">case</span></li>
+          <li><span class="n">Collaborateur</span><span class="t rel">→ Collaborateurs</span></li>
+          <li><span class="n">Mission · Tâche · Client</span><span class="t rel">relations</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>👤 PB-Collaborateurs</h3>
+        <p class="role">Équipe interne du cabinet</p>
+        <ul class="fields">
+          <li><span class="n">Nom</span><span class="t">titre</span></li>
+          <li><span class="n">Rôle</span><span class="t">Resp PF / Chef / EC…</span></li>
+          <li><span class="n">Statut autonomie</span><span class="t">select · 1-3</span></li>
+          <li><span class="n">Capacité (h/mois)</span><span class="t">nombre</span></li>
+          <li><span class="n">Email · Téléphone</span><span class="t">contact</span></li>
+          <li><span class="n">Portefeuille · Missions · Tâches · Temps</span><span class="t rel">relations inverses</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📁 PB-Documents</h3>
+        <p class="role">Suivi des pièces & lettres de mission (stockage Drive)</p>
+        <ul class="fields">
+          <li><span class="n">Nom document</span><span class="t">titre</span></li>
+          <li><span class="n">Type</span><span class="t">Lettre mission / Kbis…</span></li>
+          <li><span class="n">Statut</span><span class="t">À demander → Signé</span></li>
+          <li><span class="n">Lien Drive</span><span class="t">url</span></li>
+          <li><span class="n">Date</span><span class="t">date</span></li>
+          <li><span class="n">Client · Mission · Opportunité</span><span class="t rel">relations</span></li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="note"><b>Non inclus dans le Lot 1</b> (lots suivants) : Modèles de tâches récurrentes + moteur de génération, Historique d'autonomie, OKR (Objectif → KR → Projet), dashboards (Founder / Founder 8h / Collaborateur), et les boutons webhook Inqom / Tiime / Goodflag.</div>
+  </section>
+
+  <footer>
+    Rama Logic — Implémentation Notion pour PB-associés · Schéma généré le 21/06/2026 · Cœur opérationnel Lot 1.
+  </footer>
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad:true,
+    theme:'base',
+    themeVariables:{
+      fontFamily:'Inter, sans-serif',
+      primaryColor:'#FBF9F3',
+      primaryBorderColor:'#356B4A',
+      primaryTextColor:'#16291E',
+      lineColor:'#356B4A',
+      tertiaryColor:'#EAF3BE'
+    }
+  });
+</script>
+</body>
+</html>
