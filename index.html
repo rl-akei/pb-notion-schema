@@ -105,7 +105,6 @@ erDiagram
   COLLABORATEURS ||--o{ SUIVI_TEMPS : "auteur"
   COLLABORATEURS ||--o{ CLIENTS : "equipe dossier"
   COLLABORATEURS ||--o{ MISSIONS : "affecte"
-  COLLABORATEURS ||--o{ OPPORTUNITES : "responsable"
   COLLABORATEURS ||--o{ TACHES : "responsable"
   CLIENTS ||--o{ DOCUMENTS : "documents"
   MISSIONS ||--o{ DOCUMENTS : "documents"
@@ -128,9 +127,9 @@ erDiagram
   OPPORTUNITES {
     titre Nom_opportunite
     statut Etape
-    number Honoraire_estime
-    formule Cout_de_production
-    formule Honoraire_suggere
+    number Heures_recurrentes_ponctuelles
+    formule Cout_recurrent_ponctuel
+    formule Honoraire_suggere_an_mois
     formule Marge_previsionnelle
   }
   MISSIONS {
@@ -220,19 +219,20 @@ erDiagram
 
       <div class="card">
         <h3>💼 PB-Opportunités</h3>
-        <p class="role">Pipeline commercial (remplace Pipedrive)</p>
+        <p class="role">Pipeline commercial + simulateur d'honoraires</p>
         <ul class="fields">
           <li><span class="n">Nom opportunité</span><span class="t">titre</span></li>
           <li><span class="n">Type de mission visée</span><span class="t">multi-select</span></li>
           <li><span class="n">Étape</span><span class="t">statut · pipeline</span></li>
-          <li><span class="n">Honoraire estimé</span><span class="t">€</span></li>
-          <li><span class="n">Heures EC / Collab</span><span class="t">nombre</span></li>
-          <li><span class="n">Taux EC / Collab · Marge cible</span><span class="t">éditables</span></li>
-          <li><span class="n">Coût de production estimé</span><span class="t calc">formule</span></li>
-          <li><span class="n">Honoraire suggéré</span><span class="t calc">formule</span></li>
+          <li><span class="n">Heures EC / Collab récurrentes (/mois)</span><span class="t">nombre</span></li>
+          <li><span class="n">Heures EC / Collab ponctuelles (bilan)</span><span class="t">nombre</span></li>
+          <li><span class="n">Taux EC / Collab · Marge cible · Frais admin</span><span class="t">éditables</span></li>
+          <li><span class="n">Coût récurrent / ponctuel / production</span><span class="t calc">formules</span></li>
+          <li><span class="n">Honoraire suggéré €/an + €/mois</span><span class="t calc">formule</span></li>
+          <li><span class="n">Honoraire proposé (€/an)</span><span class="t">saisie prix</span></li>
           <li><span class="n">Marge prévisionnelle (%)</span><span class="t calc">formule</span></li>
           <li><span class="n">Client / Prospect · Contact</span><span class="t rel">relations</span></li>
-          <li><span class="n">Responsable</span><span class="t rel">→ Collaborateurs</span></li>
+          <li><span class="n">Responsable</span><span class="t">personne</span></li>
           <li><span class="n">Missions générées</span><span class="t rel">→ Missions</span></li>
         </ul>
       </div>
