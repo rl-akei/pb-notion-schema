@@ -21,7 +21,7 @@
   body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     line-height:1.5;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1080px;margin:0 auto;padding:40px 22px 80px}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 22px 80px}
   header{border-left:4px solid var(--accent);padding:4px 0 4px 18px;margin-bottom:8px}
   h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:-.02em}
   .sub{color:var(--muted);font-size:.95rem;margin:0}
@@ -29,7 +29,7 @@
     font-size:.72rem;padding:3px 10px;border-radius:20px;margin-top:12px;letter-spacing:.02em}
   h2{font-size:1.15rem;margin:44px 0 6px;letter-spacing:-.01em}
   h2 .n{color:var(--accent);font-variant-numeric:tabular-nums}
-  .lead{color:var(--muted);max-width:70ch;margin:0 0 18px}
+  .lead{color:var(--muted);max-width:74ch;margin:0 0 18px}
   .legend{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px}
   .chip{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:600;
     padding:3px 9px;border-radius:6px;white-space:nowrap}
@@ -39,14 +39,23 @@
   .c-cond{background:var(--cond-b);color:var(--cond)} .c-rdv{background:var(--rdv-b);color:var(--rdv)}
   .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
     border-radius:12px;background:var(--card)}
-  table{border-collapse:collapse;width:100%;min-width:720px;font-size:.86rem}
-  th,td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
-  thead th{background:var(--accent-soft);color:var(--accent);font-size:.76rem;text-transform:uppercase;
-    letter-spacing:.04em;position:sticky;top:0}
-  tbody tr:last-child td{border-bottom:none}
-  .mois{font-weight:700;white-space:nowrap;color:var(--ink)}
-  td .chip{margin:2px 3px 2px 0}
-  .dash{color:var(--muted);opacity:.5}
+  table{border-collapse:collapse;width:100%;font-size:.86rem}
+  /* --- calendrier horizontal --- */
+  .cal{min-width:1080px}
+  .cal th,.cal td{padding:7px 5px;text-align:center;border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);vertical-align:middle}
+  .cal thead th{background:var(--accent-soft);color:var(--accent);font-size:.72rem;text-transform:uppercase;
+    letter-spacing:.03em;position:sticky;top:0;min-width:64px}
+  .cal th:first-child,.cal td:first-child{position:sticky;left:0;z-index:2;text-align:left;
+    font-weight:700;min-width:172px;background:var(--card);box-shadow:1px 0 0 var(--line)}
+  .cal thead th:first-child{z-index:3;background:var(--accent-soft)}
+  .cal tbody tr:last-child td{border-bottom:none}
+  .cal .m1{color:var(--ink);background:var(--accent-soft);opacity:.85}
+  .cal .role{display:block;font-size:.82rem}
+  .cal .role small{display:block;color:var(--muted);font-weight:500;font-size:.72rem}
+  .cal .cell{display:flex;flex-direction:column;gap:3px;align-items:center}
+  .cal .cell .chip{font-size:.66rem;padding:2px 6px;white-space:normal;line-height:1.2;border-radius:5px}
+  .dash{color:var(--muted);opacity:.35}
   .note{font-size:.82rem;color:var(--muted);margin:8px 2px 0}
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px 14px}
@@ -55,7 +64,7 @@
   .card ul{margin:0;padding:0;list-style:none;font-size:.83rem}
   .card li{display:flex;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
   .card li:last-child{border-bottom:none}
-  .card li b{min-width:62px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+  .card li b{min-width:70px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
   .total{margin-top:10px;font-size:.8rem;color:var(--accent);font-weight:700}
   .valid{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 20px}
   .valid ol{margin:14px 0;padding-left:20px}
@@ -63,7 +72,7 @@
   .valid li b{color:var(--ink)}
   .q{color:var(--accent);font-weight:700}
   footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
-  @media print{ body{background:#fff} .scroll{overflow:visible} table{min-width:0} .wrap{padding:0} }
+  @media print{ body{background:#fff} .scroll{overflow:visible} .cal{min-width:0;font-size:.7rem} .wrap{padding:0} }
 </style>
 </head>
 <body>
@@ -78,8 +87,9 @@
   <p class="lead" style="margin-top:22px">
     Le système génère automatiquement les tâches d'un dossier à partir de 4 informations :
     la <b>typologie</b> de la mission compta, le <b>régime fiscal</b> (IS/IR), la <b>forme juridique</b>
-    et quelques <b>options</b> (TVS, CVAE, TNS). Ce document montre, mois par mois, ce que chaque « moteur »
-    produit. Merci de vérifier que ça colle à la réalité du cabinet et de trancher les points en fin de page.
+    et quelques <b>options</b> (TVS, CVAE, TNS). Ce planning se lit de gauche à droite, de janvier à janvier
+    de l'année suivante (la dernière colonne montre que le cycle <b>repart automatiquement</b>).
+    Merci de vérifier que ça colle à la réalité du cabinet et de trancher les points en fin de page.
   </p>
 
   <div class="legend">
@@ -94,53 +104,179 @@
   </div>
 
   <h2><span class="n">1.</span> Le calendrier récurrent selon la typologie</h2>
-  <p class="lead">La <b>mission compta</b> de chaque dossier porte une typologie. Voici les tâches TVA / mises à jour générées sur l'année.</p>
+  <p class="lead">Chaque ligne = un « moteur ». On lit les tâches TVA / mises à jour générées, mois après mois.</p>
   <div class="scroll">
-  <table>
+  <table class="cal">
     <thead><tr>
-      <th>Mois</th><th>Mensuel</th><th>Mensuel + MAJ trim.</th><th>Trimestriel</th><th>Annuel</th><th>Non assujetti</th>
+      <th>Typologie (moteur)</th>
+      <th>Jan</th><th>Fév</th><th>Mar</th><th>Avr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Aoû</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Déc</th><th class="m1">Jan +1</th>
     </tr></thead>
     <tbody>
-      <tr><td class="mois">Janvier</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Février</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Mars</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Avril</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Mai</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="chip c-tva">Décl. TVA (CA12)</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Juin</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Juillet</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">Acompte</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Août</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Septembre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-rdv">RDV</span></td></tr>
-      <tr><td class="mois">Octobre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-rdv">RDV</span></td></tr>
-      <tr><td class="mois">Novembre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Décembre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">Acompte</span></td><td><span class="dash">—</span></td></tr>
+      <tr>
+        <td><span class="role">Mensuel<small>TVA + MAJ chaque mois</small></span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td class="m1"><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+      </tr>
+      <tr>
+        <td><span class="role">Mensuel + MAJ trim.<small>TVA chaque mois, MAJ 4×/an</small></span></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+        <td><div class="cell"><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ</span></div></td>
+        <td class="m1"><div class="cell"><span class="chip c-tva">TVA</span></div></td>
+      </tr>
+      <tr>
+        <td><span class="role">Trimestriel<small>MAJ + TVA 4×/an</small></span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td class="m1"><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></div></td>
+      </tr>
+      <tr>
+        <td><span class="role">Annuel<small>déclaration + 2 acomptes</small></span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-tva">Décl. TVA</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">Acompte</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-tva">Acompte</span></div></td>
+        <td class="m1"><span class="dash">·</span></td>
+      </tr>
+      <tr>
+        <td><span class="role">Non assujetti<small>MAJ + RDV 2×/an</small></span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-rdv">RDV</span></div></td>
+        <td><div class="cell"><span class="chip c-maj">MAJ</span><span class="chip c-rdv">RDV</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td class="m1"><span class="dash">·</span></td>
+      </tr>
     </tbody>
   </table>
   </div>
-  <p class="note">Jour d'échéance de la TVA selon la forme juridique : <b>EI / micro = le 19</b> (à confirmer 16-19) · <b>EURL / SARL = le 21</b> · <b>SAS / SASU = le 24</b>. La MAJ compta est placée ~20 jours avant l'échéance.</p>
+  <p class="note">Jour d'échéance de la TVA selon la forme juridique : <b>EI / micro = le 19</b> (à confirmer 16-19) · <b>EURL / SARL = le 21</b> · <b>SAS / SASU = le 24</b>. La colonne <b>Jan +1</b> montre que le moteur régénère le cycle tout seul l'année suivante.</p>
 
   <h2><span class="n">2.</span> Les couches annuelles (ajoutées par-dessus)</h2>
-  <p class="lead">Selon le <b>régime fiscal</b>, la <b>forme</b> et les <b>options</b> du dossier, on empile ces tâches annuelles à date fixe.</p>
+  <p class="lead">Selon le <b>régime fiscal</b>, la <b>forme</b> et les <b>options</b> du dossier, ces tâches annuelles s'ajoutent à date fixe. Clôture supposée au 31/12.</p>
   <div class="scroll">
-  <table>
+  <table class="cal">
     <thead><tr>
-      <th>Mois</th><th>Régime IS</th><th>Régime IR</th><th>Juridique (société)</th><th>Conditionnels</th>
+      <th>Couche</th>
+      <th>Jan</th><th>Fév</th><th>Mar</th><th>Avr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Aoû</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Déc</th><th class="m1">Jan +1</th>
     </tr></thead>
     <tbody>
-      <tr><td class="mois">Janvier</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">TVS (si « à payer »)</span></td></tr>
-      <tr><td class="mois">Février</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">Acompte TNS #1</span></td></tr>
-      <tr><td class="mois">Mars</td><td><span class="chip c-is">Acompte IS #1 (15/03)</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Avril</td><td><span class="dash">—</span></td><td><span class="chip c-is">IR — demande de pièces</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Mai</td><td><span class="chip c-bilan">Bilan / Liasse (15/05)</span><span class="chip c-is">Solde IS</span></td><td><span class="chip c-bilan">Bilan / Liasse</span><span class="chip c-is">IR — déclaration</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">CVAE (18/05, si assujetti)</span></td></tr>
-      <tr><td class="mois">Juin</td><td><span class="chip c-is">Acompte IS #2 (15/06)</span></td><td><span class="dash">—</span></td><td><span class="chip c-ag">AG approbation (30/06)</span></td><td><span class="dash">—</span></td></tr>
-      <tr><td class="mois">Septembre</td><td><span class="chip c-is">Acompte IS #3 (15/09)</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">Acompte TNS #2</span></td></tr>
-      <tr><td class="mois">Décembre</td><td><span class="chip c-is">Acompte IS #4 (15/12)</span><span class="chip c-cfe">CFE (15/12)</span></td><td><span class="chip c-cfe">CFE (15/12)</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr>
+        <td><span class="role">Régime IS<small>bilan, acomptes, CFE</small></span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-is">Acompte #1</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-bilan">Bilan/Liasse</span><span class="chip c-is">Solde IS</span></div></td>
+        <td><div class="cell"><span class="chip c-is">Acompte #2</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-is">Acompte #3</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-is">Acompte #4</span><span class="chip c-cfe">CFE</span></div></td>
+        <td class="m1"><span class="dash">·</span></td>
+      </tr>
+      <tr>
+        <td><span class="role">Régime IR<small>bilan, revenus, CFE</small></span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-is">IR pièces</span></div></td>
+        <td><div class="cell"><span class="chip c-bilan">Bilan/Liasse</span><span class="chip c-is">IR décl.</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-cfe">CFE</span></div></td>
+        <td class="m1"><span class="dash">·</span></td>
+      </tr>
+      <tr>
+        <td><span class="role">Juridique<small>société (AG annuelle)</small></span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-ag">AG (30/06)</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td class="m1"><span class="dash">·</span></td>
+      </tr>
+      <tr>
+        <td><span class="role">Conditionnels<small>selon options du dossier</small></span></td>
+        <td><div class="cell"><span class="chip c-cond">TVS</span></div></td>
+        <td><div class="cell"><span class="chip c-cond">TNS #1</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-cond">CVAE</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><div class="cell"><span class="chip c-cond">TNS #2</span></div></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td><span class="dash">·</span></td>
+        <td class="m1"><div class="cell"><span class="chip c-cond">TVS</span></div></td>
+      </tr>
     </tbody>
   </table>
   </div>
-  <p class="note">Les mois sans ligne (janvier IS, juillet…) n'ont pas de tâche annuelle : seules les tâches récurrentes du tableau 1 s'appliquent. Clôture supposée au 31/12.</p>
+  <p class="note">Conditionnels : <b>TVS</b> = uniquement dossiers « à payer » · <b>CVAE</b> = uniquement si assujetti · <b>TNS</b> = EI réel & gérants majoritaires (EURL/SARL).</p>
 
   <h2><span class="n">3.</span> Trois exemples concrets (dossier complet)</h2>
-  <p class="lead">Ce que le moteur génère réellement, en combinant les deux tableaux ci-dessus.</p>
+  <p class="lead">Ce que le moteur génère réellement, en combinant les deux plannings ci-dessus.</p>
   <div class="cards">
 
     <div class="card">
