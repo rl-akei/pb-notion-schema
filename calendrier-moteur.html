@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PB-associés — Calendrier du moteur de tâches</title>
+<style>
+  :root{
+    --ink:#1c2321; --muted:#5c6b66; --line:#e2e6e3; --bg:#f7f8f6; --card:#ffffff;
+    --accent:#1f6f5c; --accent-soft:#e7f1ed;
+    --tva:#2563eb; --tva-b:#dbe7ff; --maj:#0d9488; --maj-b:#d5f0ec;
+    --bilan:#7c3aed; --bilan-b:#ece2fb; --is:#4f46e5; --is-b:#e3e2fb;
+    --cfe:#b45309; --cfe-b:#fbebcf; --ag:#9a3412; --ag-b:#fbe2d3;
+    --cond:#64748b; --cond-b:#e8edf1; --rdv:#be185d; --rdv-b:#fbdcea;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --ink:#e8ece9; --muted:#9db0aa; --line:#2c3532; --bg:#121614; --card:#1a201d;
+      --accent:#4bbfa2; --accent-soft:#16302a; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:40px 22px 80px}
+  header{border-left:4px solid var(--accent);padding:4px 0 4px 18px;margin-bottom:8px}
+  h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:.95rem;margin:0}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:600;
+    font-size:.72rem;padding:3px 10px;border-radius:20px;margin-top:12px;letter-spacing:.02em}
+  h2{font-size:1.15rem;margin:44px 0 6px;letter-spacing:-.01em}
+  h2 .n{color:var(--accent);font-variant-numeric:tabular-nums}
+  .lead{color:var(--muted);max-width:70ch;margin:0 0 18px}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:600;
+    padding:3px 9px;border-radius:6px;white-space:nowrap}
+  .c-tva{background:var(--tva-b);color:var(--tva)} .c-maj{background:var(--maj-b);color:var(--maj)}
+  .c-bilan{background:var(--bilan-b);color:var(--bilan)} .c-is{background:var(--is-b);color:var(--is)}
+  .c-cfe{background:var(--cfe-b);color:var(--cfe)} .c-ag{background:var(--ag-b);color:var(--ag)}
+  .c-cond{background:var(--cond-b);color:var(--cond)} .c-rdv{background:var(--rdv-b);color:var(--rdv)}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
+    border-radius:12px;background:var(--card)}
+  table{border-collapse:collapse;width:100%;min-width:720px;font-size:.86rem}
+  th,td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  thead th{background:var(--accent-soft);color:var(--accent);font-size:.76rem;text-transform:uppercase;
+    letter-spacing:.04em;position:sticky;top:0}
+  tbody tr:last-child td{border-bottom:none}
+  .mois{font-weight:700;white-space:nowrap;color:var(--ink)}
+  td .chip{margin:2px 3px 2px 0}
+  .dash{color:var(--muted);opacity:.5}
+  .note{font-size:.82rem;color:var(--muted);margin:8px 2px 0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px 14px}
+  .card h3{margin:0 0 2px;font-size:1rem}
+  .card .tag{font-size:.76rem;color:var(--muted);margin:0 0 12px}
+  .card ul{margin:0;padding:0;list-style:none;font-size:.83rem}
+  .card li{display:flex;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+  .card li:last-child{border-bottom:none}
+  .card li b{min-width:62px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+  .total{margin-top:10px;font-size:.8rem;color:var(--accent);font-weight:700}
+  .valid{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 20px}
+  .valid ol{margin:14px 0;padding-left:20px}
+  .valid li{margin:10px 0;padding-left:4px}
+  .valid li b{color:var(--ink)}
+  .q{color:var(--accent);font-weight:700}
+  footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
+  @media print{ body{background:#fff} .scroll{overflow:visible} table{min-width:0} .wrap{padding:0} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Calendrier du moteur de tâches</h1>
+    <p class="sub">PB-associés × Rama Logic — document de validation</p>
+    <span class="badge">À VALIDER PAR RAPHAËL & CAMILLE</span>
+  </header>
+
+  <p class="lead" style="margin-top:22px">
+    Le système génère automatiquement les tâches d'un dossier à partir de 4 informations :
+    la <b>typologie</b> de la mission compta, le <b>régime fiscal</b> (IS/IR), la <b>forme juridique</b>
+    et quelques <b>options</b> (TVS, CVAE, TNS). Ce document montre, mois par mois, ce que chaque « moteur »
+    produit. Merci de vérifier que ça colle à la réalité du cabinet et de trancher les points en fin de page.
+  </p>
+
+  <div class="legend">
+    <span class="chip c-tva">TVA</span>
+    <span class="chip c-maj">MAJ compta</span>
+    <span class="chip c-bilan">Bilan / Liasse</span>
+    <span class="chip c-is">Acompte / Solde IS · IR</span>
+    <span class="chip c-cfe">CFE</span>
+    <span class="chip c-ag">Juridique (AG)</span>
+    <span class="chip c-cond">Conditionnel (TVS/CVAE/TNS)</span>
+    <span class="chip c-rdv">RDV client</span>
+  </div>
+
+  <h2><span class="n">1.</span> Le calendrier récurrent selon la typologie</h2>
+  <p class="lead">La <b>mission compta</b> de chaque dossier porte une typologie. Voici les tâches TVA / mises à jour générées sur l'année.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Mois</th><th>Mensuel</th><th>Mensuel + MAJ trim.</th><th>Trimestriel</th><th>Annuel</th><th>Non assujetti</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="mois">Janvier</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Février</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Mars</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Avril</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Mai</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="chip c-tva">Décl. TVA (CA12)</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Juin</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Juillet</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">Acompte</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Août</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Septembre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-rdv">RDV</span></td></tr>
+      <tr><td class="mois">Octobre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-rdv">RDV</span></td></tr>
+      <tr><td class="mois">Novembre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Décembre</td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">TVA</span></td><td><span class="chip c-tva">TVA</span><span class="chip c-maj">MAJ trim.</span></td><td><span class="dash">—</span></td><td><span class="chip c-maj">MAJ</span><span class="chip c-tva">Acompte</span></td><td><span class="dash">—</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Jour d'échéance de la TVA selon la forme juridique : <b>EI / micro = le 19</b> (à confirmer 16-19) · <b>EURL / SARL = le 21</b> · <b>SAS / SASU = le 24</b>. La MAJ compta est placée ~20 jours avant l'échéance.</p>
+
+  <h2><span class="n">2.</span> Les couches annuelles (ajoutées par-dessus)</h2>
+  <p class="lead">Selon le <b>régime fiscal</b>, la <b>forme</b> et les <b>options</b> du dossier, on empile ces tâches annuelles à date fixe.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Mois</th><th>Régime IS</th><th>Régime IR</th><th>Juridique (société)</th><th>Conditionnels</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="mois">Janvier</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">TVS (si « à payer »)</span></td></tr>
+      <tr><td class="mois">Février</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">Acompte TNS #1</span></td></tr>
+      <tr><td class="mois">Mars</td><td><span class="chip c-is">Acompte IS #1 (15/03)</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Avril</td><td><span class="dash">—</span></td><td><span class="chip c-is">IR — demande de pièces</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Mai</td><td><span class="chip c-bilan">Bilan / Liasse (15/05)</span><span class="chip c-is">Solde IS</span></td><td><span class="chip c-bilan">Bilan / Liasse</span><span class="chip c-is">IR — déclaration</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">CVAE (18/05, si assujetti)</span></td></tr>
+      <tr><td class="mois">Juin</td><td><span class="chip c-is">Acompte IS #2 (15/06)</span></td><td><span class="dash">—</span></td><td><span class="chip c-ag">AG approbation (30/06)</span></td><td><span class="dash">—</span></td></tr>
+      <tr><td class="mois">Septembre</td><td><span class="chip c-is">Acompte IS #3 (15/09)</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="chip c-cond">Acompte TNS #2</span></td></tr>
+      <tr><td class="mois">Décembre</td><td><span class="chip c-is">Acompte IS #4 (15/12)</span><span class="chip c-cfe">CFE (15/12)</span></td><td><span class="chip c-cfe">CFE (15/12)</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Les mois sans ligne (janvier IS, juillet…) n'ont pas de tâche annuelle : seules les tâches récurrentes du tableau 1 s'appliquent. Clôture supposée au 31/12.</p>
+
+  <h2><span class="n">3.</span> Trois exemples concrets (dossier complet)</h2>
+  <p class="lead">Ce que le moteur génère réellement, en combinant les deux tableaux ci-dessus.</p>
+  <div class="cards">
+
+    <div class="card">
+      <h3>Ex. A — Société commerciale</h3>
+      <p class="tag">SARL · IS · TVA mensuelle + MAJ trim. · clôture 31/12</p>
+      <ul>
+        <li><b>Chaque mois</b> TVA (le 21)</li>
+        <li><b>Mar·Jun·Sep·Déc</b> MAJ trimestrielle</li>
+        <li><b>15/03</b> Acompte IS #1</li>
+        <li><b>15/05</b> Bilan / Liasse + Solde IS</li>
+        <li><b>15/06</b> Acompte IS #2</li>
+        <li><b>30/06</b> AG approbation des comptes</li>
+        <li><b>15/09</b> Acompte IS #3</li>
+        <li><b>15/12</b> Acompte IS #4 + CFE</li>
+      </ul>
+      <p class="total">≈ 23 tâches / an</p>
+    </div>
+
+    <div class="card">
+      <h3>Ex. B — Profession libérale</h3>
+      <p class="tag">EI réel BNC · IR · TVA trimestrielle</p>
+      <ul>
+        <li><b>Jan·Avr·Jul·Oct</b> MAJ + TVA (le 19)</li>
+        <li><b>Fév + Sep</b> Acomptes TNS</li>
+        <li><b>Avril</b> IR — demande de pièces</li>
+        <li><b>15/05</b> Bilan / Liasse</li>
+        <li><b>mi-mai</b> IR — déclaration des revenus</li>
+        <li><b>15/12</b> CFE</li>
+        <li><span class="chip c-cond">pas d'AG</span> (entreprise individuelle)</li>
+      </ul>
+      <p class="total">≈ 12 tâches / an</p>
+    </div>
+
+    <div class="card">
+      <h3>Ex. C — Patrimonial</h3>
+      <p class="tag">SCI · IR · non assujettie à la TVA</p>
+      <ul>
+        <li><b>Sep + Oct</b> MAJ dossier + RDV client</li>
+        <li><b>15/05</b> Bilan / déclaration de résultat</li>
+        <li><b>30/06</b> AG (société civile)</li>
+        <li><span class="chip c-cond">CFE</span> selon activité (souvent exonérée en location nue)</li>
+      </ul>
+      <p class="total">≈ 4 à 5 tâches / an</p>
+    </div>
+
+  </div>
+
+  <h2><span class="n">4.</span> Les points à trancher</h2>
+  <div class="valid">
+    <ol>
+      <li><span class="q">Jour de TVA des EI</span> — <b>16, 17, 18 ou 19 ?</b> (on a mis 19 par défaut)</li>
+      <li><span class="q">Typologie « Mensuel »</span> — la MAJ et la TVA du mois, c'est <b>1 seule tâche</b> ou <b>2 tâches distinctes</b> ?</li>
+      <li><span class="q">Mensuel vs Mensuel + MAJ trim.</span> — on reprend bien la répartition par dossier depuis votre fichier « PB - Taches » ?</li>
+      <li><span class="q">Dossiers « TVS exonérée (élec) »</span> — doivent-ils quand même faire une <b>déclaration TVS</b> ?</li>
+      <li><span class="q">CFE sur SCI / LMNP</span> en location nue — <b>concerné ou exonéré</b> selon l'activité ?</li>
+      <li><span class="q">Génération</span> — on génère par <b>année civile</b> (tout l'an prochain d'un coup) ou en <b>horizon glissant</b> (toujours 12 mois devant) ?</li>
+    </ol>
+  </div>
+
+  <footer>
+    Généré le 06/07/2026 · Source : référentiel « Moteur de génération des tâches » (Notion PB) · Rama Logic pour PB-associés.
+  </footer>
+
+</div>
+</body>
+</html>
